@@ -1,11 +1,16 @@
 <main class="main">
   <section>
     <div class="gradient">
-      <h1 class="text-red-500 text-center text-8xl font-bold">
+      <h1 class="text-red text-center text-8xl font-bold">
           <!-- {{ title }}  -->
-          {{ titleToShow }} 
-          <span class="ml-negative-2">_</span>
+          <!-- {{ titleToShow }} 
+          <span class="ml-negative-2">_</span> -->
       </h1>
+      <div class="text-red text-center text-8xl font-bold">
+        @for (phrase of phrasesToShow; track $index) {
+          <p>{{ phrase }}</p>
+        }
+      </div>
     </div>
   </section>
 </main>

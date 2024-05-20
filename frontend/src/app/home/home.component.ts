@@ -1,37 +1,59 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { Observable, Subject } from 'rxjs';
 
 @Component({
   selector: 'app-home',
   standalone: true,
   imports: [RouterOutlet],
   templateUrl: './home.component.html',
-  styleUrl: './home.component.scss'
+  styleUrl: './home.component.scss',
 })
 export class HomeComponent {
-
-  public title: string = 'WELCOME TO MY PORTFOLIO.';
+  public title: string = 'Welcome to my Portfolio.';
   public titleToShow: string = '';
 
-  public constructor() { 
+  public phrases: Array<{ word: string; delay: number, last?: boolean }> = [
+    { word: 'Welcome', delay: 120 },
+    { word: 'to', delay: 150 },
+    { word: 'my', delay: 150 },
+    { word: 'Portfolio.', delay: 250, last: true },
+  ];
+  public phrasesToShow: Array<string> = [''];
+
+  public constructor() {
     this.titleAnimation();
   }
 
-  public async titleAnimation(): Promise<void> {
-    const countTitle = this.title.length;
-    for (const i of Array(countTitle).keys()) {
-      setTimeout(() => {
-        // Remove the last character if it is an underscore
-        this.titleToShow.charAt(i) === '_' ? this.titleToShow = this.titleToShow.slice(0, -1) : null;
-        this.titleToShow += this.title[i];
-        if (i === countTitle - 1) {
-          setTimeout(() => {
-            this.titleToShow = '';
-            this.titleAnimation();
-          }, 3000);
-        }
-      }, 200 * i);
+  public async wordAnimation(
+    word: string,
+    index: number,
+    delay: number
+  ): Promise<boolean> {
+    const countWord = word.length;
+    let ended: boolean = false;
+    for (const i of Array(countWord).keys()) {
+      await new Promise((resolve) => setTimeout(resolve, delay));
+      if (!this.phrasesToShow[index]) {
+        this.phrasesToShow.push('')
+      }
+      this.phrasesToShow[index] += word[i];
+      if (i === countWord - 1) {
+        ended = true;
+      }
     }
+
+    return ended;
   }
 
+  public async titleAnimation(): Promise<void> {
+    for (const [index, word] of this.phrases.entries()) {
+      await this.wordAnimation(word.word, index, word.delay);
+      if(word.last) {
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+        this.phrasesToShow = [''];
+        this.titleAnimation();
+      }
+    }
+  }
 }
