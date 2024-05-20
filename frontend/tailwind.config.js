@@ -6,6 +6,7 @@ export const theme = {
   extend: {
     spacing: {
       'negative-2': "-2rem",
+      '15': "15rem"
     },
   },
   colors: {
